@@ -1,1 +1,1 @@
-# WePair-Health
+WePair-Health is an innovative community-based support that streamlines healthcare experiences and improves health outcomes by connecting qualified Community Health Workers with employers ready to support their community. Due to the proprietary nature of the code, I can only provide snippets of my code. This repository contains SQL, .NET, and React code for the Chat Messaging feature. 
