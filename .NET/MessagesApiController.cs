@@ -1,21 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Sabio.Models;
-using Sabio.Models.Domain.Messages;
-using Sabio.Models.Requests.Messages;
-using Sabio.Models.Domain.Users;
-using Sabio.Web.Hubs;
-using Sabio.Services;
-using Sabio.Services.Interfaces;
-using Sabio.Web.Controllers;
-using Sabio.Web.Models.Responses;
+using WePair.Models;
+using WePair.Models.Domain.Messages;
+using WePair.Models.Requests.Messages;
+using WePair.Models.Domain.Users;
+using WePair.Web.Hubs;
+using WePair.Services;
+using WePair.Services.Interfaces;
+using WePair.Web.Controllers;
+using WePair.Web.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.SignalR;
-using Sabio.Web.Hubs.Clients;
+using WePair.Web.Hubs.Clients;
 
-namespace Sabio.Web.Api.Controllers
+namespace WePair.Web.Api.Controllers
 {
     [Route("api/messages")]
     [ApiController]
