@@ -1,0 +1,64 @@
+USE [wepairhealth]
+GO
+/****** Object:  StoredProcedure [dbo].[Messages_Select_GetUsers]    Script Date: 11/6/2023 8:26:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Author: Destiny Line
+-- Create date: 9/25/23
+-- Description: Select will provide a list of FirstName/LastName of Users in recent conversation with current user.
+-- Code Reviewer:
+
+-- MODIFIED BY: Author
+-- MODIFIED DATE: 10/2/23
+-- Code Reviewer:
+-- Note:
+
+	ALTER proc [dbo].[Messages_Select_GetUsers]
+					@UserId int
+					
+
+	AS
+	/*
+
+	Declare @UserId int = 2
+			
+
+	Execute dbo.Messages_Select_GetUsers  
+					@UserId 
+					
+	Execute dbo.Messages_SelectAll
+--------------
+	Select u.Id
+			,u.FirstName
+			,u.LastName
+	from dbo.Users as u
+--------------
+	//DISTINCT Names removes duplicates!!
+
+	Select distinct 
+					u.FirstName
+					,u.LastName
+	from dbo.Users as u
+	*/
+
+	BEGIN
+
+	SELECT	
+			[Id]
+			,[Body]
+			,[Subject]
+			,[Recipient] = dbo.fn_GetBaseUserJSON(RecipientId)
+			,[Sender] = dbo.fn_GetBaseUserJSON(SenderId)
+			,[DateSent]
+			,[DateRead]
+			,[DateModified]
+			,[DateCreated]
+	  FROM	[dbo].[Messages]
+	  Where RecipientId = @UserId or SenderId = @UserId
+	  
+	 
+	END
+
