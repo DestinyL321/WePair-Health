@@ -1,0 +1,50 @@
+USE [wepairhealth]
+GO
+/****** Object:  StoredProcedure [dbo].[Messages_Update]    Script Date: 11/6/2023 8:26:56 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Author: Destiny Line
+-- Create date: 9/22/23
+-- Description: Used to Update an existing Message Body or Subject.
+-- Code Reviewer:
+
+-- MODIFIED BY: 
+-- MODIFIED DATE:
+-- Code Reviewer:
+-- Note:
+
+	ALTER proc [dbo].[Messages_Update]
+
+					@Body nvarchar(1000)
+					,@Subject nvarchar(100)	   
+					,@Id int
+
+	AS
+
+	/*
+	Declare @Id int = 10;
+
+		Declare 
+					@Body nvarchar(1000) = ' Message3'
+					,@Subject nvarchar(100) = 'Subject5'						
+					   				   	
+		Execute [dbo].[Messages_Update]
+					@Body
+					,@Subject 											   
+					,@Id
+	*/
+
+	BEGIN
+
+	UPDATE [dbo].[Messages]
+				SET
+					[Body] = @Body
+					,[Subject] = @Subject			
+									   
+				FROM [dbo].[Messages]
+				Where Id = @Id
+					 
+	END
