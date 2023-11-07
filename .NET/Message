@@ -1,11 +1,11 @@
-using Sabio.Models.Domain.Users;
+using WePair.Models.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sabio.Models.Domain.Messages
+namespace WePair.Models.Domain.Messages
 {
     public class Message
     {
