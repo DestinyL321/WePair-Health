@@ -1,0 +1,48 @@
+USE [wepairhealth]
+GO
+/****** Object:  StoredProcedure [dbo].[Messages_Select_Users_InConversation]    Script Date: 11/6/2023 8:26:34 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Author: Destiny Line
+-- Create date: 9/25/23
+-- Description: Select will generate a distinct list of User FirstName/LastName in conversation with Current User.
+-- Code Reviewer:
+
+-- MODIFIED BY: Author
+-- MODIFIED DATE: 10/12/23
+-- Code Reviewer: Brijesh
+-- Note:
+
+
+	ALTER proc [dbo].[Messages_Select_Users_InConversation]
+			@UserId int
+			
+	AS
+
+	/*
+	Declare @UserId int = 2	
+
+	Execute	dbo.[Messages_Select_Users_InConversation]
+			@UserId 		
+
+	*/	
+
+	BEGIN	
+
+		select Distinct 
+		[sender]= dbo.fn_GetBaseUserJSON(m.SenderId)  from dbo.[Messages] as m 
+		where m.RecipientId = @UserId   
+
+		UNION
+
+		select Distinct
+		[recipient]= dbo.fn_GetBaseUserJSON(m.RecipientId )
+		from dbo.[Messages] as m 
+		where m.SenderId = @UserId  
+
+
+	END
+
