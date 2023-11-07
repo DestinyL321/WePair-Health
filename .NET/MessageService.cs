@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.Extensions.Configuration.UserSecrets;
-using Sabio.Data;
-using Sabio.Data.Providers;
-using Sabio.Models.Domain;
-using Sabio.Models.Domain.Messages;
-using Sabio.Models.Domain.Users;
-using Sabio.Models.Requests.Messages;
-using Sabio.Services.Interfaces;
+using WePair.Data;
+using WePair.Data.Providers;
+using WePair.Models.Domain;
+using WePair.Models.Domain.Messages;
+using WePair.Models.Domain.Users;
+using WePair.Models.Requests.Messages;
+using WePair.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sabio.Services
+namespace WePair.Services
 {
     public class MessageService : IMessageService
     {
