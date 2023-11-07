@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sabio.Models;
-using Sabio.Models.Domain.Messages;
-using Sabio.Models.Domain.Users;
-using Sabio.Models.Requests.Messages;
+using WePair.Models;
+using WePair.Models.Domain.Messages;
+using WePair.Models.Domain.Users;
+using WePair.Models.Requests.Messages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sabio.Services.Interfaces
+namespace WePair.Services.Interfaces
 {
     public interface IMessageService
     {
