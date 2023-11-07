@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Sabio.Models.Requests.Messages
+namespace WePair.Models.Requests.Messages
 {
     public class MessageAddRequest
     {
