@@ -1,16 +1,16 @@
-﻿using Sabio.Models.Domain.Chat;
+﻿using WePair.Models.Domain.Chat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Sabio.Web.Hubs.Clients;
-using Sabio.Services.Interfaces;
-using Sabio.Services;
+using WePair.Web.Hubs.Clients;
+using WePair.Services.Interfaces;
+using WePair.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace Sabio.Web.Hubs
+namespace WePair.Web.Hubs
 {
     public class ChatHub : Hub<IChatHub>
     {
