@@ -1,0 +1,76 @@
+USE [wepairhealth]
+GO
+/****** Object:  StoredProcedure [dbo].[Messages_Insert]    Script Date: 11/6/2023 8:25:59 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Author: Destiny Line
+-- Create date: 9/23/23
+-- Description: Used to create a new Message body to be sent and recorded.
+-- Code Reviewer:
+
+-- MODIFIED BY: Author
+-- MODIFIED DATE: 10/26/23
+-- Code Reviewer:
+-- Note:
+
+	ALTER proc [dbo].[Messages_Insert]
+					@Body nvarchar(1000)
+				   ,@Subject nvarchar(100)
+				   ,@RecipientId int
+				   ,@currentUser int
+				   ,@DateSent datetime2(7)
+				   ,@DateRead datetime2(7)				  
+				   ,@Id int Output
+
+	AS
+
+	/*
+	Declare @Id int = 0;
+
+	Declare 
+					@Body nvarchar(1000) = 'Hello'
+				   ,@Subject nvarchar(100) = 'Hello'
+				   ,@RecipientId int = 17
+				   ,@currentUser int = 3
+				   ,@DateSent datetime2(7) = getutcdate()
+				   ,@DateRead datetime2(7) = getutcdate()				   
+	
+	Execute [dbo].[Messages_Insert]
+					@Body
+				   ,@Subject 
+				   ,@RecipientId 
+				   ,@currentUser
+				   ,@DateSent
+				   ,@DateRead 				   
+				   ,@Id Output
+
+
+	*/
+
+
+	BEGIN
+
+		INSERT INTO [dbo].[Messages]
+				   ([Body]
+				   ,[Subject]
+				   ,[RecipientId]
+				   ,[SenderId]
+				   ,[DateSent]
+				   ,[DateRead])
+			 VALUES
+				   (@Body 
+				   ,@Subject
+				   ,@RecipientId
+				   ,@currentUser
+				   ,@DateSent
+				   ,@DateRead)
+		   
+			Set @Id = SCOPE_IDENTITY()
+
+	END
+
+
+
