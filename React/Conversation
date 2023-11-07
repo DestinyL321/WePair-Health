@@ -1,0 +1,98 @@
+import React from "react";
+import PropTypes from "prop-types";
+import { formatDate } from "helper/utils";
+
+function Conversation(props) {
+  const convo = props.message;
+  const contact = props.contact;
+  const currentUser = props.currentUser;
+
+  const formattedDate = formatDate(convo?.dateSent);
+
+  return (
+    <React.Fragment>
+      {currentUser.id === convo.senderId ? (
+        <div className="d-flex justify-content-end mb-4">
+          <div className="d-flex mw-lg-40">
+            <div className=" me-3 text-end">
+              <small>
+                {currentUser?.firstName + " " + currentUser?.lastName},
+                {" " + formattedDate}
+              </small>
+              <div className="d-flex justify-content-end">
+                {/* <div className="me-2 mt-2">
+                  <ActionMenu position="start" />
+                </div> */}
+                <div className="card mt-2 rounded-top-md-end-0 bg-primary text-white">
+                  <div className="card-body text-start p-3">{convo?.body}</div>
+                </div>
+              </div>
+            </div>
+            <img
+              src={currentUser?.avatarUrl}
+              alt={`${currentUser?.firstName} ${currentUser?.lastName}`}
+              className="mb-2 mb-lg-0 rounded-circle chat-avatar-md"
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="d-flex justify-content-start mb-4">
+          <div className="d-flex w-lg-40 mb-4">
+            <span className="avatar avatar-md me-0">
+              <img
+                src={contact?.avatarUrl}
+                alt={`${contact?.firstName} ${contact?.lastName}`}
+                className="mb-2 mb-lg-0 rounded-circle chat-avatar-md"
+              />
+            </span>
+            <div className=" ms-3">
+              <small>
+                {contact?.firstName + " " + contact?.lastName},{" "}
+                {" " + formattedDate}
+              </small>
+              <div className="d-flex">
+                <div className="card mt-2 rounded-top-md-left-0">
+                  <div className="card-body p-3">
+                    <p className="mb-0 text-dark" />
+                    {convo?.body}
+                  </div>
+                </div>
+                {/* <div className="ms-2 mt-2">
+                <ActionMenu position="end" />
+              </div> */}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+Conversation.propTypes = {
+  message: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    subject: PropTypes.string.isRequired,
+    body: PropTypes.string.isRequired,
+    dateSent: PropTypes.string,
+    senderId: PropTypes.number,
+  }),
+  contact: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    mi: PropTypes.string,
+    email: PropTypes.string,
+    avatarUrl: PropTypes.string,
+  }),
+  currentUser: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    mi: PropTypes.string,
+    email: PropTypes.string,
+    avatarUrl: PropTypes.string,
+  }),
+};
+
+export default Conversation;
