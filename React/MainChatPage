@@ -1,0 +1,348 @@
+import React, { useState, useEffect } from "react";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import debug from "sabio-debug";
+import chatUserService from "services/chatUserService";
+import ContactCard from "./sidebar/ContactCard";
+import Conversation from "./chatbox/Conversation";
+import { API_HOST_PREFIX } from "services/serviceHelpers";
+const _logger = debug.extend("chat");
+import PropTypes from "prop-types";
+
+function ChatPage(props) {
+  const [connection, setConnection] = useState(null);
+  const [contact, setContact] = useState({
+    data: [],
+    mappedComponents: [],
+  });
+  const [convo, setConvo] = useState({
+    convoData: [],
+    convoMappedComponents: [],
+    selectedContact: null,
+  });
+  const [newMessage, setNewMessage] = useState("");
+
+  function initializeConnection() {
+    const newConnection = new HubConnectionBuilder()
+      .withUrl(`${API_HOST_PREFIX}/chat`)
+      .withAutomaticReconnect()
+      .build();
+    setConnection(newConnection);
+    getUsers();
+    newConnection.start().then(onConnectionSuccess).catch(onConnectionError);
+  }
+  useEffect(initializeConnection, []);
+
+  function manageConnection() {
+    if (connection) {
+      connection
+        .start()
+        .then((result) => {
+          _logger("successful connection", result);
+          connection.invoke("AddMessage"); //review this again.
+          connection.on("ReceiveMessage", sendMessageSuccess);
+        })
+        .catch(onConnectionError);
+    }
+  }
+  useEffect(manageConnection, [connection]);
+
+  useEffect(() => {
+    if (convo.selectedContact?.id) {
+      chatUserService
+        .getCurrentUserConversations(convo.selectedContact.id)
+        .then(onGetCurrentUserConversationsSuccess)
+        .catch(onGetCurrentUserConversationsError);
+    }
+  }, [convo.selectedContact]);
+
+  const onConnectionSuccess = () => {
+    _logger("Connected!");
+    connection.on("ReceiveMessage", (message) => {
+      _logger(message, "After I send this fool a message they receive it.");
+      if (message.senderId !== currentUser.id) {
+        _logger("New Message", newMessage);
+      }
+    });
+  };
+
+  const onConnectionError = (error) => {
+    _logger("Connection failed.", error);
+  };
+
+  function sendMessage(e) {
+    e.preventDefault();
+
+    const payload = {
+      body: newMessage,
+      subject: "",
+      recipientId: convo.selectedContact.id,
+      dateSent: new Date(),
+      dateRead: null,
+    };
+
+    chatUserService
+      .create(payload)
+      .then(sendMessageSuccess)
+      .catch(sendMessageError);
+  }
+
+  function sendMessageSuccess(newMessage) {
+    _logger("SendMessageSuccess Response ===>", newMessage);
+
+    newMessage.senderId = props.currentUser.id;
+    let selectedContact = contact.data.find((contact) => {
+      return contact.id === newMessage.recipientId;
+    });
+    _logger("SendMessageSuccess Response ===>", selectedContact);
+
+    setConvo((prevState) => {
+      let newState = { ...prevState };
+      newState.convoData = [...newState.convoData, newMessage];
+      newState.convoMappedComponents = newState.convoData.map(mapOfConvo);
+
+      return newState;
+    });
+
+    setNewMessage("");
+    // scroll to last card-body
+  }
+
+  function sendMessageError(error) {
+    _logger("SendMessageError", error);
+  }
+
+  const getUsers = () => {
+    chatUserService.getUsers().then(onGetUsersSuccess).catch(onGetUsersError);
+  };
+
+  const onGetUsersSuccess = (response) => {
+    _logger("onGetUsersSuccess", response);
+    if (response && response.items) {
+      let allContacts = response.items;
+
+      setContact((prevState) => {
+        const updatedContact = { ...prevState };
+        updatedContact.data = allContacts;
+        updatedContact.mappedComponents = allContacts.map(mappingOfContacts);
+        return updatedContact;
+      });
+    } else {
+      _logger("response or items are undefined");
+    }
+  };
+
+  const mappingOfContacts = (aContact) => {
+    return (
+      <ContactCard
+        key={aContact.id}
+        aContact={aContact}
+        onHandleClick={handleClicked}
+      />
+    );
+  };
+
+  function onGetUsersError(error) {
+    _logger(error);
+  }
+
+  function onGetCurrentUserConversationsSuccess(response) {
+    let userConvo = response.items;
+    setConvo((prevState) => {
+      let newState = { ...prevState };
+      newState.convoData = userConvo;
+      newState.convoMappedComponents = userConvo.map(mapOfConvo);
+      return newState;
+    });
+  }
+
+  const mapOfConvo = (message) => {
+    return (
+      <Conversation
+        key={message.id}
+        message={message}
+        contact={convo.selectedContact}
+        {...props}
+      />
+    );
+  };
+
+  function onGetCurrentUserConversationsError(error) {
+    _logger("getCurrentConvo Error", error, convo);
+  }
+
+  function handleClicked(contact) {
+    // current person
+    setConvo((prevState) => {
+      let newState = { ...prevState };
+      newState.selectedContact = contact;
+      return newState;
+    });
+  }
+
+  const update = (payload, id) => {
+    chatUserService
+      .update(payload, id)
+      .then(onUpdateSuccess)
+      .catch(onUpdateError);
+  };
+  _logger(update);
+
+  function onUpdateSuccess(response) {
+    _logger("Update Response", response);
+  }
+
+  function onUpdateError(error) {
+    _logger(error);
+  }
+
+  const deleteById = (id) => {
+    chatUserService
+      .deleteById(id)
+      .then(onDeleteByIdSuccess)
+      .catch(onDeleteByIdError);
+  };
+  _logger(deleteById);
+
+  function onDeleteByIdSuccess(response) {
+    _logger("Get Conversations Response", response);
+  }
+
+  function onDeleteByIdError(error) {
+    _logger(error);
+  }
+
+  return (
+    <React.Fragment>
+      <div className="container-fluid p-4">
+        <div className="g-0 row">
+          <div className="col-xl-3 col-lg-12 col-md-12 col-12">
+            <div className="bg-white border-end border-top vh-100">
+              <div className="chat-window">
+                <div className="chat-sticky-header sticky-top bg-white">
+                  <div className="px-4 pt-3 pb-4">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <h1 className="mb-0 fw-bold h2">Contacts</h1>
+                      </div>
+                      <div className="d-flex"></div>
+                    </div>
+                    <div className="mt-4 mb-4"></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-lg-12 col-md-12 col-sm-12">
+                      <ul className="contacts-list list-unstyled">
+                        {contact.mappedComponents}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-xl-9 col-lg-12 col-md-12 col-12">
+            <div className="chat-body w-100 vh-100">
+              <div className="bg-white border-top border-bottom px-4 py-3 sticky-top">
+                <div className="d-flex justify-content-between align-items-center">
+                  <a className="me-2 d-xl-none d-block" href=" ">
+                    <i className="fe fe-arrow-left"></i>
+                  </a>
+                  <div className="ms-2">
+                    <h4 className="mb-0">Current Contact</h4>
+                    <p className="mb-0 text-muted">
+                      <span
+                        className="d-inline-block text-truncate"
+                        style={{ maxWidth: "unset" }}
+                      >
+                        Online
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div
+                data-simplebar="init"
+                className="vh-100 simplebar-scrollable-y"
+                style={{ maxHeight: "70vh" }}
+              >
+                <div className="simplebar-wrapper" style={{ margin: "0px" }}>
+                  <div className="simplebar-mask">
+                    <div
+                      className="simplebar-offset"
+                      style={{ right: "0px", bottom: "0px" }}
+                    >
+                      <div
+                        className="simplebar-content-wrapper"
+                        tabIndex="0"
+                        role="region"
+                        aria-label="scrollable content"
+                        style={{ height: "100%", overflow: "hidden scroll" }}
+                      >
+                        <div
+                          className="simplebar-content"
+                          style={{ padding: "0px" }}
+                        >
+                          {convo.convoMappedComponents}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="simplebar-placeholder"
+                    style={{ width: "867px", height: "768px" }}
+                  ></div>
+                </div>
+                <div
+                  className="simplebar-track simplebar-horizontal"
+                  style={{ visibility: "hidden" }}
+                ></div>
+                <div
+                  className="simplebar-track simplebar-vertical"
+                  style={{ visibility: "visible" }}
+                ></div>
+              </div>
+              <div className="bg-light px-4 py-3 chat-footer">
+                <div className="bg-white p-2 rounded-3 shadow-sm">
+                  <div className="position-relative">
+                    <textarea
+                      placeholder="Type a New Message"
+                      id="Excerpt"
+                      className="form-control border-0
+                    form-control-simple no-resize form-control"
+                      style={{ height: "40px" }}
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                    />
+                  </div>
+                  <div className="position-absolute end-0 mt-n7 me-4">
+                    <button
+                      type="submit"
+                      id="sendMessage"
+                      value="Send"
+                      className="fs-3 text-primary btn-focus-none btn btn-none"
+                      onClick={sendMessage}
+                    >
+                      <i className="fe fe-send"></i>
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-3 d-flex"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </React.Fragment>
+  );
+}
+
+ChatPage.propTypes = {
+  currentUser: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    mi: PropTypes.string,
+    email: PropTypes.string,
+    avatarUrl: PropTypes.string,
+  }),
+};
+export default ChatPage;
