@@ -1,0 +1,49 @@
+USE [wepairhealth]
+GO
+/****** Object:  StoredProcedure [dbo].[Messages_Select_ByRece]    Script Date: 11/6/2023 8:26:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Author: Destiny Line
+-- Create date: 9/22/23
+-- Description: 
+-- Code Reviewer:
+
+-- MODIFIED BY: Author
+-- MODIFIED DATE: 10/2/23
+-- Code Reviewer:
+-- Note:
+
+	ALTER proc [dbo].[Messages_Select_ByRece]
+					@RecipientId int
+
+	AS
+	/*
+
+	Declare @RecipientId int = 8
+
+	Execute dbo.Messages_Select_ByRece   @RecipientId
+
+	Execute dbo.Messages_SelectAll
+
+	*/
+
+	BEGIN
+
+	SELECT [Id]
+		  ,[Body]
+		  ,[Subject]
+		  ,[Recipient] = dbo.fn_GetBaseUserJSON(RecipientId)
+		  ,[Sender] = dbo.fn_GetBaseUserJSON(SenderId)
+		  ,[DateSent]
+		  ,[DateRead]
+		  ,[DateModified]
+		  ,[DateCreated]
+	  FROM [dbo].[Messages]
+	  Where RecipientId = @RecipientId
+	  	
+	END
+
+
