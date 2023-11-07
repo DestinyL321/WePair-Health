@@ -1,0 +1,39 @@
+USE [wepairhealth]
+GO
+/****** Object:  StoredProcedure [dbo].[Messages_Delete_ById]    Script Date: 11/6/2023 8:26:45 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Author: Destiny Line
+-- Create date: 9/22/23
+-- Description: To delete a single instance of message by Id.
+-- Code Reviewer:
+
+-- MODIFIED BY: 
+-- MODIFIED DATE:
+-- Code Reviewer:
+-- Note:
+
+ALTER proc [dbo].[Messages_Delete_ById]
+				@Id int
+
+AS
+/*
+Declare @Id int = 10
+
+Execute dbo.Messages_Delete_ById @Id
+
+****
+Execute dbo.Messages_SelectAll
+
+*/
+
+BEGIN
+
+DELETE FROM [dbo].[Messages]
+      WHERE Id = @Id
+
+
+END
