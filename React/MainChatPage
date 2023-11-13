@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import debug from "sabio-debug";
 import chatUserService from "services/chatUserService";
 import ContactCard from "./sidebar/ContactCard";
 import Conversation from "./chatbox/Conversation";
